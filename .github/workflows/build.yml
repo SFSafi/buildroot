@@ -39,7 +39,7 @@ jobs:
             libpython3-dev \
             libssl-dev \
             mtd-utils \
-            python3-distutils \
+            python3-setuptools \
             fakeroot \
             cpio \
             rsync \
