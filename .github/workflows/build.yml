@@ -1,0 +1,84 @@
+name: Build E-Pass Buildroot
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  pull_request:
+    branches: [master]
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  workflow_dispatch:
+    inputs:
+      clean-build:
+        description: 'Clean build (clear cache)'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            wget \
+            unzip \
+            build-essential \
+            git \
+            bc \
+            swig \
+            libncurses-dev \
+            libpython3-dev \
+            libssl-dev \
+            mtd-utils \
+            python3-distutils \
+            fakeroot \
+            cpio \
+            rsync \
+            cmake \
+            file
+
+      - name: Cache download directory
+        if: ${{ !inputs.clean-build }}
+        uses: actions/cache@v4
+        with:
+          path: dl
+          key: buildroot-dl-${{ hashFiles('package/**/*.mk', 'package/**/*.hash') }}
+          restore-keys: |
+            buildroot-dl-
+
+      - name: Apply defconfig
+        run: make rhodesisland_epass_defconfig
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p artifacts
+          echo "=== Build artifacts ==="
+          ls -la output/images/
+          cp -v output/images/u-boot-sunxi-with-nand-spl.bin artifacts/ 2>/dev/null || true
+          cp -v output/images/boot*.itb artifacts/ 2>/dev/null || true
+          cp -v output/images/boot*.img artifacts/ 2>/dev/null || true
+          cp -v output/images/rootfs_ubi.img artifacts/ 2>/dev/null || true
+          cp -v output/images/*.dtb artifacts/ 2>/dev/null || true
+          echo "=== Collected artifacts ==="
+          ls -la artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: epass-build-artifacts
+          path: artifacts/
+          retention-days: 30
