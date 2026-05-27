@@ -1,5 +1,6 @@
 #!/bin/sh
 cp board/rhodesisland/epass/scripts/ubinize-rootfs.cfg "${BINARIES_DIR}/ubinize-rootfs.cfg"
+cp board/rhodesisland/epass/scripts/ubinize-boot.cfg "${BINARIES_DIR}/ubinize-boot.cfg"
 cp board/rhodesisland/epass/scripts/gensdimage.py "${BINARIES_DIR}/gensdimage.py"
 cp board/rhodesisland/epass/scripts/kernel.its "${BINARIES_DIR}"
 
@@ -24,11 +25,22 @@ echo "building kernel blob..."
 cd "${BINARIES_DIR}"
 "${MKIMAGE}" -f ${IMAGE_ITS} ${OUTPUT_NAME}
 
+echo "building boot UBI image..."
+fakeroot sh -c "rm -r bootfs"
+mkdir bootfs
+cp "${OUTPUT_NAME}" bootfs/
+cp -r dt bootfs/
+fakeroot sh -c 'mkfs.ubifs -x lzo -F -m 2048 -e 126976 -c 46 -o boot_ubifs.img -r bootfs'
+fakeroot sh -c 'ubinize -o boot_ubi.img -m 2048 -p 131072 -O 2048 -s 2048 ubinize-boot.cfg -v'
+fakeroot sh -c "rm -r bootfs"
+
 echo ============ start building SD Card image ============
 python3 gensdimage.py
 
 
 rm ubinize-rootfs.cfg
+rm ubinize-boot.cfg
 rm -f rootfs_ubifs.img
+rm -f boot_ubifs.img
 fakeroot sh -c "rm -r rootfs"
 
