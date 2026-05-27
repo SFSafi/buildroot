@@ -36,7 +36,7 @@ index 4f09f3a57..135430832 100644
  		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL),
 -		     SPINAND_SELECT_TARGET(w25m02gv_select_target)),
 +		     SPINAND_SELECT_TARGET(w25m02gv_select_target)
-+			 .onchip_ecc_quirk = 1),
++		     .onchip_ecc_quirk = 1),
  	SPINAND_INFO("W25N01GV", 0xAA,
  		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
  		     NAND_ECCREQ(1, 512),
@@ -46,7 +46,7 @@ index 4f09f3a57..135430832 100644
  		     0,
 -		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL)),
 +		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL),
-+			 .onchip_ecc_quirk = 1),
++		     .onchip_ecc_quirk = 1),
  };
  
  /**
