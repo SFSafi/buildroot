@@ -1,0 +1,14 @@
+diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
+--- a/drivers/mtd/nand/spi/winbond.c
++++ b/drivers/mtd/nand/spi/winbond.c
+@@ -37,2 +37,10 @@ static const struct spinand_info winbond_spinand_table[] = {
+ 		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL)),
++	SPINAND_INFO("W25N01KV", 0xAE,
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 1, 1, 1),
++		     NAND_ECCREQ(1, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants_w25m02gv,
++					      &write_cache_variants_w25m02gv,
++					      &update_cache_variants_w25m02gv),
++		     0,
++		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL)),
+ };
