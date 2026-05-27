@@ -1,7 +1,7 @@
 diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
 --- a/drivers/mtd/nand/spi/winbond.c
 +++ b/drivers/mtd/nand/spi/winbond.c
-@@ -100,4 +100,12 @@ static const struct spinand_info winbond_spinand_table[] = {
+@@ -100,4 +100,13 @@ static const struct spinand_info winbond_spinand_table[] = {
  		     0,
  		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL),
  		     .onchip_ecc_quirk = 1),
